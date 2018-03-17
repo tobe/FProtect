@@ -85,7 +85,7 @@ namespace FProtect {
                 Protect(FunctionAddress);
             } else {
                 #ifdef FPROTECT_DEBUG
-                printf("%s: Reference count not 0 for %s\n", __func__, function->Name);
+                printf("%s: Reference count mismatch for %s\n", __func__, function->Name);
                 #endif
             }
         }
