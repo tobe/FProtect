@@ -149,9 +149,11 @@
   <ItemGroup>
     <ClInclude Include="FProtect.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="Logger\Logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FProtect.cpp" />
+    <ClCompile Include="Logger\Logger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

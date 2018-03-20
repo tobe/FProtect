@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FProtect.h"
+#include "Logger\Logger.h"
 #include <map>
 #include <algorithm>
 #include <assert.h>
@@ -17,6 +18,8 @@ namespace FProtect {
         srand(time(NULL));
 
         CurrentProcess = GetCurrentProcess();
+
+        Logger::Initialize(LoggingMode::STDOUT);
     }
 
     void FProtect_Begin(void *FunctionAddress, const char *FunctionName) {
@@ -41,7 +44,7 @@ namespace FProtect {
             ));
 
             #ifdef FPROTECT_DEBUG
-            printf("%s: Added %s at 0x%x\n", __func__, FunctionName, StartAddress);
+            Logger::Write(LoggingLevel::OK, __func__, "Added %s at 0x%x", FunctionName, StartAddress);
             #endif
 
             return;
@@ -50,7 +53,7 @@ namespace FProtect {
         // The function has been already added, it has to be protected.
         Function *function = GetFunctionByAddress(FunctionAddress);
         #ifdef FPROTECT_DEBUG
-        printf("%s: Unprotecting %s for execution\n", __func__, FunctionName);
+        Logger::Write(LoggingLevel::OK, __func__, "Unprotecting %s for execution", FunctionName);
         #endif
 
         function->ReferenceCount++;
@@ -85,7 +88,7 @@ namespace FProtect {
                 Protect(FunctionAddress);
             } else {
                 #ifdef FPROTECT_DEBUG
-                printf("%s: Reference count mismatch for %s\n", __func__, function->Name);
+                Logger::Write(LoggingLevel::FAIL, __func__, "Reference count mismatch for %s", function->Name);
                 #endif
             }
         }
@@ -101,7 +104,7 @@ namespace FProtect {
         uint8_t key = function->Protected ? function->Key : rand() % 255;
 
         #ifdef FPROTECT_DEBUG
-        printf("%s: Key for %s is %x\n", __func__, function->Name, key);
+        Logger::Write(LoggingLevel::OK, __func__, "Key for %s is %x", function->Name, key);
         #endif
 
         // Adjust privileges
@@ -115,7 +118,7 @@ namespace FProtect {
         );
         if(vp == 0) {
             #ifdef FPROTECT_DEBUG
-            printf("%s: Ante VirtualProtect failed with: %x\n", __func__, GetLastError());
+            Logger::Write(LoggingLevel::FAIL, __func__, "Ante VirtualProtect failed with: %x", GetLastError());
             #endif
         }
 
@@ -134,7 +137,7 @@ namespace FProtect {
         );
         if(vp == 0) {
             #ifdef FPROTECT_DEBUG
-            printf("%s: Post VirtualProtect failed with: %x\n", __func__, GetLastError());
+            Logger::Write(LoggingLevel::FAIL, __func__, "Post VirtualProtect failed with: %x", GetLastError());
             #endif
         }
 
@@ -146,7 +149,7 @@ namespace FProtect {
         );
 
         #ifdef FPROTECT_DEBUG
-        printf("%s: Done\n", __func__);
+        Logger::Write(LoggingLevel::OK, __func__, "Done with %s", function->Name);
         #endif
 
         // The function is now protected
@@ -157,6 +160,54 @@ namespace FProtect {
     BOOL VirtualProtect(LPVOID lpAddress, DWORD dwSize, DWORD flNewProtect, PDWORD lpflOldProtect) {
         // TODO: Make a safer version of this
         return ::VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect);
+
+        /*using pNtWriteVirtualMemory = NTSTATUS(NTAPI *)(HANDLE ProcessHandle,
+            PVOID BaseAddress, PVOID Buffer, ULONG NumberOfBytesToWrite,
+            PULONG NumberOfBytesWritten);
+
+        using pNtProtectVirtualMemory = NTSTATUS(NTAPI *)(
+            HANDLE               ProcessHandle,
+            PVOID            *BaseAddress,
+            PULONG           NumberOfBytesToProtect,
+            ULONG                NewAccessProtection,
+            PULONG              OldAccessProtection);
+
+        pNtProtectVirtualMemory NtProtectVirtualMemory = nullptr;
+
+        HMODULE hModule = GetModuleHandle("ntdll.dll");
+        NtProtectVirtualMemory = (pNtProtectVirtualMemory)GetProcAddress(hModule,
+            "NtProtectVirtualMemory");
+
+        NTSTATUS success = NtProtectVirtualMemory(
+            CurrentProcess,
+            (PVOID *)lpAddress,
+            (PULONG)dwSize,
+            flNewProtect,
+            lpflOldProtect
+        );
+
+        printf("success: %x", success);
+        return success;*/
+
+        /*__asm {
+            mov  esi, esp
+            mov  eax, dword ptr[lpflOldProtect]
+            push eax
+            mov  ecx, dword ptr[flNewProtect]
+            push ecx
+            lea  edx, [dwSize]
+            push edx
+            lea  eax, [lpAddress]
+            push eax
+            mov  ecx, dword ptr[CurrentProcess]
+            push ecx
+            mov  eax, 4Dh
+            xor  ecx, ecx
+            lea  edx, [esp + 4]
+            call dword ptr fs : [0C0h]
+            add  esp, 4
+            ret  14h
+        }*/
     }
 
     Function *GetFunctionByAddress(void *FunctionAddress) {
