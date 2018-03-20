@@ -15,29 +15,33 @@ private:
 Testing::Testing() {}
 Testing::~Testing() {}
 char Testing::buzz(void *) {
-    void *address;
-    __asm {
-        push eax;
-        mov eax, (Testing::buzz);
-        mov address, eax;
-        pop eax;
-    }
+    // https://stackoverflow.com/questions/8121320/get-memory-address-of-member-function
+    char(__thiscall Testing::*pBuzz)(void *) = &Testing::buzz;
+    uintptr_t *address = (uintptr_t *&)pBuzz;
+    //FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(address), __func__);
     FProtectBegin(address);
 
-    printf("Alea iacta est.");
+    printf("Alea iacta est.\n");
 
     FProtectEnd(address);
+    return 0xFF;
 }
 
 void fuzz() {
+    //FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(&fuzz), __func__);
     FProtectBegin(fuzz);
+
+    // For some reason msvc optimizes the first call to the second one...
+    printf("%x == ", fuzz);
+    printf("%x\n", &fuzz);
 
     int x = 10;
     printf("Hello, fuzz!\n");
     for(int i = 0; i < 100; i++) {
         x += 10;
-    } 
+    }
 
+    //FProtect::FProtect_End(reinterpret_cast<uintptr_t *>(&fuzz));
     FProtectEnd(fuzz);
 }
 
@@ -54,8 +58,8 @@ int main(int argc, char **argv) {
     t->buzz(nullptr);
 
     while(true) {
-        if(GetAsyncKeyState(VK_SPACE) & 0x8000)
-            break;
+        if(GetAsyncKeyState(VK_END) & 0x8000)
+            break; 
 
         Sleep(1000);
     }

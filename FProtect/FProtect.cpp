@@ -22,7 +22,7 @@ namespace FProtect {
         Logger::Initialize(LoggingMode::STDOUT);
     }
 
-    void FProtect_Begin(void *FunctionAddress, const char *FunctionName) {
+    void FProtect_Begin(uintptr_t *FunctionAddress, const char *FunctionName) {
         // The start of the actual function, after CALL FProtect::FProtect_Begin
         uintptr_t StartAddress  = reinterpret_cast<uintptr_t>(_ReturnAddress());
 
@@ -63,7 +63,7 @@ namespace FProtect {
         function->Protected = false;
     }
 
-    void FProtect_End(void *FunctionAddress) {
+    void FProtect_End(uintptr_t *FunctionAddress) {
         // Find the function from the hashmap
         Function *function = GetFunctionByAddress(FunctionAddress);
 

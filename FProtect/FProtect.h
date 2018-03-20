@@ -7,8 +7,8 @@
 
 namespace FProtect {
     void FProtect_Init();
-    void FProtect_Begin(void *FunctionAddress, const char *FunctionName);
-    void FProtect_End(void *FunctionAddress);
+    void FProtect_Begin(uintptr_t *FunctionAddress, const char *FunctionName);
+    void FProtect_End(uintptr_t *FunctionAddress);
     void FProtect_Erase();
     void FProtect_Restore();
 
@@ -17,5 +17,5 @@ namespace FProtect {
     Function *GetFunctionByAddress(void *FunctionAddress);
 }
 
-#define FProtectBegin(Function) FProtect::FProtect_Begin(reinterpret_cast<void *>(Function), __func__);
-#define FProtectEnd(Function)   FProtect::FProtect_End(reinterpret_cast<void *>(Function));
+#define FProtectBegin(Function) FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(Function), __func__);
+#define FProtectEnd(Function)   FProtect::FProtect_End(reinterpret_cast<uintptr_t *>(Function));
