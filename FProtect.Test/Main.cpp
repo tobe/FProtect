@@ -64,5 +64,7 @@ int main(int argc, char **argv) {
         Sleep(1000);
     }
 
+    FProtect::FProtect_Cleanup();
+
     return 0;
 }

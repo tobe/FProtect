@@ -6,20 +6,23 @@
 #include <algorithm>
 #include <assert.h>
 #include <time.h>
+#include <memory>
 
 #include <intrin.h>  
 #pragma intrinsic(_ReturnAddress)  
 
 namespace FProtect {
-    std::map<void *, Function *> Functions;
+    std::map<uintptr_t *, Function *> Functions;
     HANDLE CurrentProcess;
 
     void FProtect_Init() {
-        srand(time(NULL));
+        srand(static_cast<unsigned int>(time(NULL)));
 
         CurrentProcess = GetCurrentProcess();
 
-        Logger::Initialize(LoggingMode::STDOUT);
+        #ifdef FPROTECT_DEBUG
+        Logger::Initialize(FPROTECT_LOGMODE);
+        #endif
     }
 
     void FProtect_Begin(uintptr_t *FunctionAddress, const char *FunctionName) {
@@ -30,18 +33,16 @@ namespace FProtect {
         if(Functions.find(FunctionAddress) == Functions.end()) {
             // It doesn't, add the function into the hashmap
             Function *newFunction = new Function();
+
             newFunction->StartAddress   = StartAddress;
             newFunction->EndAddress     = 0;
             newFunction->Protected      = false;
-            newFunction->Size		    = 0;
+            newFunction->Size           = 0;
             newFunction->ReferenceCount = 1;
             newFunction->Key            = 0;
             newFunction->Name           = FunctionName;
 
-            Functions.insert(std::pair<void *, Function *>(
-                FunctionAddress,
-                newFunction
-            ));
+            Functions.insert(std::make_pair(FunctionAddress, newFunction));
 
             #ifdef FPROTECT_DEBUG
             Logger::Write(LoggingLevel::OK, __func__, "Added %s at 0x%x", FunctionName, StartAddress);
@@ -51,7 +52,7 @@ namespace FProtect {
         }
 
         // The function has been already added, it has to be protected.
-        Function *function = GetFunctionByAddress(FunctionAddress);
+        auto function = GetFunctionByAddress(FunctionAddress);
         #ifdef FPROTECT_DEBUG
         Logger::Write(LoggingLevel::OK, __func__, "Unprotecting %s for execution", FunctionName);
         #endif
@@ -65,7 +66,7 @@ namespace FProtect {
 
     void FProtect_End(uintptr_t *FunctionAddress) {
         // Find the function from the hashmap
-        Function *function = GetFunctionByAddress(FunctionAddress);
+        auto function = GetFunctionByAddress(FunctionAddress);
 
         // Decrement the reference count
         function->ReferenceCount--;
@@ -94,9 +95,9 @@ namespace FProtect {
         }
     }
 
-    void Protect(void *FunctionAddress) {
+    void Protect(uintptr_t *FunctionAddress) {
         // Fetch the func
-        Function *function = GetFunctionByAddress(FunctionAddress);
+        auto function = GetFunctionByAddress(FunctionAddress);
         assert(function->EndAddress != 0);
         assert(function->Size != 0);
 
@@ -157,6 +158,15 @@ namespace FProtect {
         function->Key = key;
     }
 
+    void FProtect_Cleanup() {
+        // Remove all dynamically allocated objects from the collection
+        for(auto &function : Functions) {
+            delete function.second;
+        }
+
+        Functions.clear();
+    }
+
     BOOL VirtualProtect(LPVOID lpAddress, DWORD dwSize, DWORD flNewProtect, PDWORD lpflOldProtect) {
         // TODO: Make a safer version of this
         return ::VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect);
@@ -210,12 +220,11 @@ namespace FProtect {
         }*/
     }
 
-    Function *GetFunctionByAddress(void *FunctionAddress) {
+    Function *GetFunctionByAddress(uintptr_t *FunctionAddress) {
         // Find the function from the hashmap
         auto functionIterator = Functions.find(FunctionAddress);
         assert(functionIterator->first != nullptr);
-        Function *function = functionIterator->second;
 
-        return function;
+        return functionIterator->second;
     }
 }

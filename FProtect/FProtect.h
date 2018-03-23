@@ -3,7 +3,10 @@
 #include <Windows.h>
 #include "Function.h"
 
+#include <memory>
+
 #define FPROTECT_DEBUG 1
+#define FPROTECT_LOGMODE LoggingMode::STDOUT
 
 namespace FProtect {
     void FProtect_Init();
@@ -11,10 +14,11 @@ namespace FProtect {
     void FProtect_End(uintptr_t *FunctionAddress);
     void FProtect_Erase();
     void FProtect_Restore();
+    void FProtect_Cleanup();
 
-    void Protect(void *FunctionAddress);
+    void Protect(uintptr_t *FunctionAddress);
     BOOL VirtualProtect(LPVOID lpAddress, DWORD dwSize, DWORD flNewProtect, PDWORD lpflOldProtect);
-    Function *GetFunctionByAddress(void *FunctionAddress);
+    Function* GetFunctionByAddress(uintptr_t *FunctionAddress);
 }
 
 #define FProtectBegin(Function) FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(Function), __func__);
