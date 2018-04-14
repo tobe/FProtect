@@ -18,7 +18,7 @@ namespace FProtect {
 
     void Protect(uintptr_t *FunctionAddress);
     BOOL VirtualProtect(LPVOID lpAddress, DWORD dwSize, DWORD flNewProtect, PDWORD lpflOldProtect);
-    Function* GetFunctionByAddress(uintptr_t *FunctionAddress);
+    Function *GetFunctionByAddress(uintptr_t *FunctionAddress);
 }
 
 #define FProtectBegin(Function) FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(Function), __func__);
