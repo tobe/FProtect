@@ -13,19 +13,22 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Logger">
+      <UniqueIdentifier>{35208649-0618-4c8a-8bb8-083aaee81ba3}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Logger">
-      <UniqueIdentifier>{dbb5f445-da49-4ea0-90fe-f7d166c0d780}</UniqueIdentifier>
+      <UniqueIdentifier>{4a6d6bc6-cf4f-49db-a0aa-526495dead58}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FProtect.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Function.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Logger\Logger.h">
-      <Filter>Source Files\Logger</Filter>
+      <Filter>Header Files\Logger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

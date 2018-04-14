@@ -168,56 +168,8 @@ namespace FProtect {
     }
 
     BOOL VirtualProtect(LPVOID lpAddress, DWORD dwSize, DWORD flNewProtect, PDWORD lpflOldProtect) {
-        // TODO: Make a safer version of this
+        // TODO: Make a safer version of this, using syscalls
         return ::VirtualProtect(lpAddress, dwSize, flNewProtect, lpflOldProtect);
-
-        /*using pNtWriteVirtualMemory = NTSTATUS(NTAPI *)(HANDLE ProcessHandle,
-            PVOID BaseAddress, PVOID Buffer, ULONG NumberOfBytesToWrite,
-            PULONG NumberOfBytesWritten);
-
-        using pNtProtectVirtualMemory = NTSTATUS(NTAPI *)(
-            HANDLE               ProcessHandle,
-            PVOID            *BaseAddress,
-            PULONG           NumberOfBytesToProtect,
-            ULONG                NewAccessProtection,
-            PULONG              OldAccessProtection);
-
-        pNtProtectVirtualMemory NtProtectVirtualMemory = nullptr;
-
-        HMODULE hModule = GetModuleHandle("ntdll.dll");
-        NtProtectVirtualMemory = (pNtProtectVirtualMemory)GetProcAddress(hModule,
-            "NtProtectVirtualMemory");
-
-        NTSTATUS success = NtProtectVirtualMemory(
-            CurrentProcess,
-            (PVOID *)lpAddress,
-            (PULONG)dwSize,
-            flNewProtect,
-            lpflOldProtect
-        );
-
-        printf("success: %x", success);
-        return success;*/
-
-        /*__asm {
-            mov  esi, esp
-            mov  eax, dword ptr[lpflOldProtect]
-            push eax
-            mov  ecx, dword ptr[flNewProtect]
-            push ecx
-            lea  edx, [dwSize]
-            push edx
-            lea  eax, [lpAddress]
-            push eax
-            mov  ecx, dword ptr[CurrentProcess]
-            push ecx
-            mov  eax, 4Dh
-            xor  ecx, ecx
-            lea  edx, [esp + 4]
-            call dword ptr fs : [0C0h]
-            add  esp, 4
-            ret  14h
-        }*/
     }
 
     Function *GetFunctionByAddress(uintptr_t *FunctionAddress) {
