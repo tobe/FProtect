@@ -48,7 +48,7 @@ namespace FProtect.External
                 return;
             }
 
-            var testing = Parser.Initialize(data);
+            var testing = FileParser.Initialize(data);
         }
     }
 }

@@ -42,7 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser.cs" />
+    <Compile Include="Assembler\Assembler.cs" />
+    <Compile Include="Assembler\IAssembler.cs" />
+    <Compile Include="Assembler\IInstruction.cs" />
+    <Compile Include="Assembler\Instruction.cs" />
+    <Compile Include="FileParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

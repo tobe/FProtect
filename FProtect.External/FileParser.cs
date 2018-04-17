@@ -6,8 +6,20 @@ using System.Threading.Tasks;
 
 namespace FProtect.External
 {
-    static public class Parser
+    static public class FileParser
     {
+        /// <summary>
+        /// "Magic bytes" which mark the start and the end of a routine
+        /// </summary>
+        private const byte _magicByte1 = 0xF7;
+        private const byte _magicByte2 = 0xF8;
+        private const byte _magicByte3 = 0xF9;
+
+        /// <summary>
+        /// Parses the executable file
+        /// </summary>
+        /// <param name="Data">Bytes of the file</param>
+        /// <returns>A list of found routines</returns>
         public static List<Dictionary<string, UInt32>> Initialize(byte[] Data)
         {
             var results = new List<Dictionary<string, UInt32>>();
@@ -16,15 +28,15 @@ namespace FProtect.External
 
             for(UInt32 i = 0; i < Data.Length; i++)
             {
-                if(Parser.HasStart(Data, i))
+                if(FileParser.HasStart(Data, i))
                 {
                     foundStart = true;
                     startAddress = i;
                 }
 
-                if(Parser.HasEnd(Data, i) && foundStart)
+                if(FileParser.HasEnd(Data, i) && foundStart)
                 {
-                    // Found the end of the function, create a new dictionary for it and add it
+                    // Found the end of the routine, create a new dictionary for it and add it
                     results.Add(new Dictionary<string, uint>
                     {
                         {"start", startAddress},
@@ -43,16 +55,16 @@ namespace FProtect.External
 
         private static bool HasStart(byte[] ByteArray, UInt32 Offset)
         {
-            return ByteArray[Offset] == 0x12 &&
-                   ByteArray[Offset + 1] == 0x34 &&
-                   ByteArray[Offset + 2] == 0x56;
+            return ByteArray[Offset] == _magicByte1 &&
+                   ByteArray[Offset + 1] == _magicByte2 &&
+                   ByteArray[Offset + 2] == _magicByte3;
         }
 
         private static bool HasEnd(byte[] ByteArray, UInt32 Offset)
         {
-            return ByteArray[Offset] == 0x56 &&
-                   ByteArray[Offset + 1] == 0x34 &&
-                   ByteArray[Offset + 2] == 0x12;
+            return ByteArray[Offset] == _magicByte3 &&
+                   ByteArray[Offset + 1] == _magicByte2 &&
+                   ByteArray[Offset + 2] == _magicByte1;
         }
     }
 }
