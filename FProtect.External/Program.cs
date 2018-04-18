@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using FProtect.External.Assembler;
 
 namespace FProtect.External
 {
@@ -49,6 +50,16 @@ namespace FProtect.External
             }
 
             var testing = FileParser.Initialize(data);
+
+            var asd = new Instruction(Mnemonics.ADD, Registers.EAX, 0xA5);
+            for (int i = 0; i < 10; i++)
+            {
+                foreach (var item in asd.ByteCode)
+                {
+                    Console.Write("{0:X} ", item);
+                }
+                Console.WriteLine("");
+            }
         }
     }
 }
