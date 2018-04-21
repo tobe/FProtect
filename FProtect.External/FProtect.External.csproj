@@ -46,6 +46,7 @@
     <Compile Include="Assembler\IAssembler.cs" />
     <Compile Include="Assembler\IInstruction.cs" />
     <Compile Include="Assembler\Instruction.cs" />
+    <Compile Include="Assembler\Instruction32.cs" />
     <Compile Include="FileParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,72 +16,51 @@ namespace FProtect.External.Assembler
 
     public enum Registers
     {
-        EAX = 0xc0,
-        EBX = 0xc3,
-        ECX = 0xc1,
-        EDX = 0xc2,
-        ESI = 0xc6,
-        EDI = 0xc7
+        EAX = 0,
+        EBX = 3,
+        ECX = 1,
+        EDX = 2,
+        ESI = 6,
+        EDI = 7
     }
 
-    public class Instruction
+    public abstract class Instruction : IInstruction
     {
-        private byte[] _byteCode;
+        protected byte[] _byteCode;
         public byte[] ByteCode
         {
             get { return _byteCode; }
             set { _byteCode = value; }
         }
 
-        private Mnemonics _mnemonic;
-        private Registers _register;
-        private byte? _value;
+        protected Mnemonics _mnemonic;
+        protected Registers? _register;
+        protected byte? _value;
 
-        private static Random _random = new Random();
+        protected static Random _random = new Random();
 
-        public Instruction(Mnemonics Mnemonic, Registers Register, byte? Value = null)
+        public Instruction(Mnemonics Mnemonic, Registers? Register, byte? Value = null)
         {
             this._mnemonic = Mnemonic;
+            // If a register hasn't been supplied, this means it's a special instruction.
             this._register = Register;
             // If a value hasn't been supplied, this means it's a unary mnemonic.
             this._value = Value;
-
-            // Generate bytecode automatically for us
-            this.GenerateByteCode();
         }
 
         /// <summary>
-        /// Generates bytecode based on the supplied information
+        /// Gets the correct register opcode depending on the operation
         /// </summary>
-        private void GenerateByteCode()
+        /// <param name="Mnemonic">The mnemonic of the operation</param>
+        /// <returns>The correct register opcode for a mnemonic</returns>
+        protected byte GetRegisterOpcode(Mnemonics Mnemonic)
         {
-            // Find out which mnemonic is being assembled and call the correct method
-            switch(this._mnemonic)
-            {
-                case Mnemonics.ADD:
-                    this.Add();        
-                break;
-            }
-        }
+            if (Mnemonic == Mnemonics.ADD)
+                return (byte)(0xc0 + (int)this._register);
+            if (Mnemonic == Mnemonics.SUB)
+                return (byte)(0xe8 + (int)this._register);
 
-        private void Add()
-        {
-            // opcode register byte 00 00 00
-            this._byteCode = new byte[] { 0x81, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-            // Fix the register and the actual value
-            this._byteCode[1] = (byte)this._register;
-            this._byteCode[2] = (byte)this._value;
-
-            // Check if the register is EAX, if it is apply a random special transformation
-            if (this._register == Registers.EAX && Instruction._random.NextDouble() > 0.5)
-                this._byteCode = new byte[] { 0x05, this._byteCode[2], 0x00, 0x00, 0x00 };
-        }
-
-        private void Sub()
-        {
-            // opcode register byte 00 00 00
-            this._byteCode = new byte[] { };
+            return 0;
         }
     }
 }

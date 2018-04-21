@@ -51,7 +51,7 @@ namespace FProtect.External
 
             var testing = FileParser.Initialize(data);
 
-            var asd = new Instruction(Mnemonics.ADD, Registers.EAX, 0xA5);
+            var asd = new Instruction32(Mnemonics.ADD, Registers.EAX, 0xA5);
             for (int i = 0; i < 10; i++)
             {
                 foreach (var item in asd.ByteCode)
