@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using FProtect.External;
 using FProtect.External.Assembler;
 
 namespace FProtect.External
@@ -49,17 +50,36 @@ namespace FProtect.External
                 return;
             }
 
-            var testing = FileParser.Initialize(data);
+            //var testing = FileParser.Initialize(data);
 
-            var asd = new Instruction32(Mnemonics.ADD, Registers.EAX, 0xA5);
-            for (int i = 0; i < 10; i++)
+            List<Instruction> testingData = new List<Instruction>
             {
-                foreach (var item in asd.ByteCode)
-                {
-                    Console.Write("{0:X} ", item);
-                }
-                Console.WriteLine("");
-            }
+                new Instruction(Mnemonics.ADD, Registers.EAX, 0xA5),
+                new Instruction(Mnemonics.ADD, Registers.EBX, 0xA5),
+                new Instruction(Mnemonics.ADD, Registers.ECX, 0xA5),
+                new Instruction(Mnemonics.ADD, Registers.ESI, 0xA5),
+                new Instruction(Mnemonics.ADD, Registers.EDI, 0xA5),
+
+                new Instruction(Mnemonics.SUB, Registers.EAX, 0xA5),
+                new Instruction(Mnemonics.SUB, Registers.EBX, 0xA5),
+                new Instruction(Mnemonics.SUB, Registers.ECX, 0xA5),
+                new Instruction(Mnemonics.SUB, Registers.ESI, 0xA5),
+                new Instruction(Mnemonics.SUB, Registers.EDI, 0xA5),
+
+                new Instruction(Mnemonics.ADD, Registers.RAX, 0xA5, true),
+                new Instruction(Mnemonics.ADD, Registers.RBX, 0xA5, true),
+                new Instruction(Mnemonics.ADD, Registers.RCX, 0xA5, true),
+                new Instruction(Mnemonics.ADD, Registers.RSI, 0xA5, true),
+                new Instruction(Mnemonics.ADD, Registers.RDI, 0xA5, true),
+
+                new Instruction(Mnemonics.SUB, Registers.RAX, 0xA5, true),
+                new Instruction(Mnemonics.SUB, Registers.RBX, 0xA5, true),
+                new Instruction(Mnemonics.SUB, Registers.RCX, 0xA5, true),
+                new Instruction(Mnemonics.SUB, Registers.RSI, 0xA5, true),
+                new Instruction(Mnemonics.SUB, Registers.RDI, 0xA5, true),
+            };
+
+            Console.WriteLine(new Assembler.InstructionAssembler(testingData));
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FProtect.External.Assembler
 {
-    interface IAssembler
+    interface IInstructionAssembler
     {
 
     }
