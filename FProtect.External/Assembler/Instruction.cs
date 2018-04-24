@@ -67,6 +67,8 @@ namespace FProtect.External.Assembler
                 return (byte)(0xe8 + (int)this._register);
             if (Mnemonic == Mnemonics.XOR)
                 return (byte)(0xf0 + (int)this._register);
+            if (Mnemonic == Mnemonics.NOT)
+                return (byte)(0xd0 + (int)this._register);
 
             return 0;
         }
@@ -99,6 +101,9 @@ namespace FProtect.External.Assembler
                     break;
                 case Mnemonics.XOR:
                     this.Xor();
+                    break;
+                case Mnemonics.NOT:
+                    this.Not();
                     break;
             }
         }
@@ -154,6 +159,19 @@ namespace FProtect.External.Assembler
             }
 
             // If we are dealing with a 64 bit wide register, append 0x48 in front
+            if (this._is64Bit)
+                this.PrependBytecode(0x48);
+        }
+
+        private void Not()
+        {
+            // opcode register
+            this._byteCode = new byte[] { 0xf7, 0x00 };
+
+            // Fix the first opcode to get the right register
+            this._byteCode[1] = this.GetRegisterOpcode(Mnemonics.NOT);
+
+            // If it's a 64 bit instruction, then just prepend 0x48
             if (this._is64Bit)
                 this.PrependBytecode(0x48);
         }

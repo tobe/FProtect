@@ -77,6 +77,14 @@ namespace FProtect.External
                 new Instruction(Mnemonics.XOR, Registers.RAX, 0xA5, true),
                 new Instruction(Mnemonics.XOR, Registers.RCX, 0xA5, true),
                 new Instruction(Mnemonics.XOR, Registers.RDX, 0xA5, true),
+
+                new Instruction(Mnemonics.NOT, Registers.EAX),
+                new Instruction(Mnemonics.NOT, Registers.ECX),
+                new Instruction(Mnemonics.NOT, Registers.EDX),
+
+                new Instruction(Mnemonics.NOT, Registers.RAX, Is64Bit: true),
+                new Instruction(Mnemonics.NOT, Registers.RCX, Is64Bit: true),
+                new Instruction(Mnemonics.NOT, Registers.RDX, Is64Bit: true)
             };
 
             Console.WriteLine(new Assembler.InstructionAssembler(testingData));
