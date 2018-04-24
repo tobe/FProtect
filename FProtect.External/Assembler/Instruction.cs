@@ -19,20 +19,11 @@ namespace FProtect.External.Assembler
         EAX = 0,
         RAX = 0,
 
-        EBX = 3,
-        RBX = 3,
-
         ECX = 1,
         RCX = 1,
 
         EDX = 2,
-        RDX = 2,
-
-        ESI = 6,
-        RSI = 6,
-
-        EDI = 7,
-        RDI = 7
+        RDX = 2
     }
 
     public class Instruction : IInstruction

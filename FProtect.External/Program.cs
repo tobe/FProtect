@@ -55,28 +55,20 @@ namespace FProtect.External
             List<Instruction> testingData = new List<Instruction>
             {
                 new Instruction(Mnemonics.ADD, Registers.EAX, 0xA5),
-                new Instruction(Mnemonics.ADD, Registers.EBX, 0xA5),
                 new Instruction(Mnemonics.ADD, Registers.ECX, 0xA5),
-                new Instruction(Mnemonics.ADD, Registers.ESI, 0xA5),
-                new Instruction(Mnemonics.ADD, Registers.EDI, 0xA5),
+                new Instruction(Mnemonics.ADD, Registers.EDX, 0xA5),
 
                 new Instruction(Mnemonics.SUB, Registers.EAX, 0xA5),
-                new Instruction(Mnemonics.SUB, Registers.EBX, 0xA5),
                 new Instruction(Mnemonics.SUB, Registers.ECX, 0xA5),
-                new Instruction(Mnemonics.SUB, Registers.ESI, 0xA5),
-                new Instruction(Mnemonics.SUB, Registers.EDI, 0xA5),
+                new Instruction(Mnemonics.SUB, Registers.EDX, 0xA5),
 
                 new Instruction(Mnemonics.ADD, Registers.RAX, 0xA5, true),
-                new Instruction(Mnemonics.ADD, Registers.RBX, 0xA5, true),
                 new Instruction(Mnemonics.ADD, Registers.RCX, 0xA5, true),
-                new Instruction(Mnemonics.ADD, Registers.RSI, 0xA5, true),
-                new Instruction(Mnemonics.ADD, Registers.RDI, 0xA5, true),
+                new Instruction(Mnemonics.ADD, Registers.RDX, 0xA5, true),
 
                 new Instruction(Mnemonics.SUB, Registers.RAX, 0xA5, true),
-                new Instruction(Mnemonics.SUB, Registers.RBX, 0xA5, true),
                 new Instruction(Mnemonics.SUB, Registers.RCX, 0xA5, true),
-                new Instruction(Mnemonics.SUB, Registers.RSI, 0xA5, true),
-                new Instruction(Mnemonics.SUB, Registers.RDI, 0xA5, true),
+                new Instruction(Mnemonics.SUB, Registers.RDX, 0xA5, true),
             };
 
             Console.WriteLine(new Assembler.InstructionAssembler(testingData));
