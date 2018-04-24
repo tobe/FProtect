@@ -65,6 +65,8 @@ namespace FProtect.External.Assembler
                 return (byte)(0xc0 + (int)this._register);
             if (Mnemonic == Mnemonics.SUB)
                 return (byte)(0xe8 + (int)this._register);
+            if (Mnemonic == Mnemonics.XOR)
+                return (byte)(0xf0 + (int)this._register);
 
             return 0;
         }
@@ -95,6 +97,9 @@ namespace FProtect.External.Assembler
                 case Mnemonics.SUB:
                     this.Arithmetics(false);
                     break;
+                case Mnemonics.XOR:
+                    this.Xor();
+                    break;
             }
         }
 
@@ -116,6 +121,33 @@ namespace FProtect.External.Assembler
             {
                 this._byteCode = new byte[] {
                         IsAddition ? (byte)0x05 : (byte)0x2d,
+                        this._byteCode[2],
+                        0x00, 0x00, 0x00
+                    };
+            }
+
+            // If we are dealing with a 64 bit wide register, append 0x48 in front
+            if (this._is64Bit)
+                this.PrependBytecode(0x48);
+        }
+
+        private void Xor()
+        {
+            // opcode register byte 00 00 00
+            this._byteCode = new byte[] { 0x81, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+            // Fix the first opcode to get the right register
+            this._byteCode[1] = this.GetRegisterOpcode(Mnemonics.XOR);
+
+            // Add the byte
+            this._byteCode[2] = (byte)this._value;
+
+            // Check if the register is RAX/EAX, if it is apply a random special transformation
+            bool transformEax = Instruction._random.NextDouble() >= 0.5 ? true : false;
+            if ((this._register == Registers.EAX || this._register == Registers.RAX) && transformEax)
+            {
+                this._byteCode = new byte[] {
+                        0x35,
                         this._byteCode[2],
                         0x00, 0x00, 0x00
                     };
