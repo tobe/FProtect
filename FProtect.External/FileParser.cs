@@ -11,9 +11,9 @@ namespace FProtect.External
         /// <summary>
         /// "Magic bytes" which mark the start and the end of a routine
         /// </summary>
-        private const byte _magicByte1 = 0xF7;
-        private const byte _magicByte2 = 0xF8;
-        private const byte _magicByte3 = 0xF9;
+        private const byte _magicByte1 = 0xF4;
+        private const byte _magicByte2 = 0x0F;
+        private const byte _magicByte3 = 0xAA;
 
         /// <summary>
         /// Parses the executable file
@@ -62,8 +62,8 @@ namespace FProtect.External
 
         private static bool HasEnd(byte[] ByteArray, UInt32 Offset)
         {
-            return ByteArray[Offset] == _magicByte3 &&
-                   ByteArray[Offset + 1] == _magicByte2 &&
+            return ByteArray[Offset] == _magicByte2 &&
+                   ByteArray[Offset + 1] == _magicByte3 &&
                    ByteArray[Offset + 2] == _magicByte1;
         }
     }

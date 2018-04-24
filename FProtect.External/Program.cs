@@ -50,8 +50,28 @@ namespace FProtect.External
                 return;
             }
 
-            //var testing = FileParser.Initialize(data);
+            var testing = FileParser.Initialize(data);
+            Program.DisplayFileTest(testing);
+            
+        }
 
+        /// <summary>
+        /// Displays some file parser tests
+        /// </summary>
+        /// <param name="Dictionary"></param>
+        private static void DisplayFileTest(List<Dictionary<string, uint>> Dictionary)
+        {
+            foreach(var function in Dictionary)
+            {
+                Console.WriteLine(function); // TODO: fix this
+            }
+        }
+
+        /// <summary>
+        /// Displays some assembler tests
+        /// </summary>
+        private static void DisplayAssemblerTests()
+        {
             List<Instruction> testingData = new List<Instruction>
             {
                 new Instruction(Mnemonics.ADD, Registers.EAX, 0xA5),

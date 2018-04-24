@@ -2,6 +2,37 @@
 
 #include <Windows.h>
 #include <stdio.h>
+#include <intrin.h>
+
+#define MAGIC_START __halt(); _rsm();
+#define MAGIC_END _rsm(); __halt(); __nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop(); \
+__nop();
 
 class Testing {
 public:
@@ -14,10 +45,9 @@ private:
 };
 Testing::Testing() {}
 Testing::~Testing() {}
+#pragma optimize( "", off )
 char Testing::buzz(void *) {
-    __asm __emit 0x12
-    __asm __emit 0x34
-    __asm __emit 0x56
+    MAGIC_START
 
     // https://stackoverflow.com/questions/8121320/get-memory-address-of-member-function
     char(__thiscall Testing::*pBuzz)(void *) = &Testing::buzz;
@@ -29,77 +59,21 @@ char Testing::buzz(void *) {
 
     FProtectEnd(address);
 
-    __asm __emit 0x56
-    __asm __emit 0x34
-    __asm __emit 0x12
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-
+    MAGIC_END
     return 0xFF;
 }
 
 void __declspec(noinline) something() {
-    __asm _emit 0x12
-    __asm _emit 0x34
-    __asm _emit 0x56
+    MAGIC_START
 
     printf("Hello world");
 
-    __asm _emit 0x56
-    __asm _emit 0x34
-    __asm _emit 0x12
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
+    MAGIC_END
 }
 
+
 void fuzz() {
-    __asm _emit 0x12
-    __asm _emit 0x34
-    __asm _emit 0x56
+    MAGIC_START
 
     //FProtect::FProtect_Begin(reinterpret_cast<uintptr_t *>(&fuzz), __func__);
     FProtectBegin(fuzz);
@@ -117,38 +91,13 @@ void fuzz() {
     //FProtect::FProtect_End(reinterpret_cast<uintptr_t *>(&fuzz));
     FProtectEnd(fuzz);
 
-    __asm _emit 0x56
-    __asm _emit 0x34
-    __asm _emit 0x12
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
-    __asm _emit 0x90
+    MAGIC_END
 }
+#pragma optimize( "", on ) 
 
 int main(int argc, char **argv) {
     FProtect::FProtect_Init();
-
+      
     printf("calling fuzz the first time\n");
     fuzz();
     printf("calling fuzz the 2nd time\n");
