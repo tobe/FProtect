@@ -46,7 +46,9 @@
     <Compile Include="Assembler\IInstructionAssembler.cs" />
     <Compile Include="Assembler\IInstruction.cs" />
     <Compile Include="Assembler\Instruction.cs" />
+    <Compile Include="Encryption\InstructionEncryption.cs" />
     <Compile Include="FileParser.cs" />
+    <Compile Include="Encryption\RoutineInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FProtect.External;
 using FProtect.External.Assembler;
+using FProtect.External.Encryption;
 
 namespace FProtect.External
 {
@@ -52,7 +53,9 @@ namespace FProtect.External
 
             var testing = FileParser.Initialize(data);
             Program.DisplayFileTest(testing);
-            
+
+            InstructionEncryption instructionEncryption = new InstructionEncryption(data, 3, false);
+            instructionEncryption.EncryptRoutine(testing[0]);
         }
 
         /// <summary>
